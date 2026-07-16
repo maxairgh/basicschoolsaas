@@ -6,9 +6,11 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
+use Spatie\Permission\Traits\HasRoles;
 
 class User extends Authenticatable
 {
+    use HasRoles;
     /** @use HasFactory<\Database\Factories\UserFactory> */
     use HasFactory, Notifiable;
 
@@ -18,9 +20,26 @@ class User extends Authenticatable
      * @var list<string>
      */
     protected $fillable = [
-        'name',
+          'school_id',
+
+        'employee_no',
+
+        'first_name',
+        'middle_name',
+        'last_name',
+
         'email',
+        'phone',
+
         'password',
+
+        'avatar',
+
+        'gender',
+
+        'date_of_birth',
+
+        'is_active',
     ];
 
     /**
@@ -42,7 +61,27 @@ class User extends Authenticatable
     {
         return [
             'email_verified_at' => 'datetime',
+            'phone_verified_at' => 'datetime',
+            'last_login_at' => 'datetime',
+            'date_of_birth' => 'date',
             'password' => 'hashed',
+            'is_active' => 'boolean', 
         ];
+    }
+
+     public function school()
+    {
+        return $this->belongsTo(School::class);
+    }
+
+    public function getFullNameAttribute()
+    {
+        return collect([
+            $this->first_name,
+            $this->middle_name,
+            $this->last_name,
+        ])
+        ->filter()
+        ->implode(' ');
     }
 }
