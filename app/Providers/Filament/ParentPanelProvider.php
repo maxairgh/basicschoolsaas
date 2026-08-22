@@ -22,17 +22,16 @@ use Illuminate\Routing\Middleware\SubstituteBindings;
 use Illuminate\Session\Middleware\StartSession;
 use Illuminate\View\Middleware\ShareErrorsFromSession;
 
-class SchoolPanelProvider extends PanelProvider
+class ParentPanelProvider extends PanelProvider
 {
     public function panel(Panel $panel): Panel
     {
         return $panel
-            ->default()
-            ->id('school')
-            ->path('school') 
+            ->id('parent')
+            ->path('parent')
             ->login(Login::class)
             ->colors([
-                'primary' => Color::Blue,
+                'primary' => Color::Amber,
             ])
              ->renderHook(
                 PanelsRenderHook::AUTH_LOGIN_FORM_BEFORE,
@@ -42,12 +41,12 @@ class SchoolPanelProvider extends PanelProvider
                 PanelsRenderHook::AUTH_LOGIN_FORM_AFTER,
                fn (): View => view('components/hooks/linkhome'), 
             )
-            ->discoverResources(in: app_path('Filament/Resources'), for: 'App\Filament\Resources')
-            ->discoverPages(in: app_path('Filament/Pages'), for: 'App\Filament\Pages')
+            ->discoverResources(in: app_path('Filament/Parent/Resources'), for: 'App\Filament\Parent\Resources')
+            ->discoverPages(in: app_path('Filament/Parent/Pages'), for: 'App\Filament\Parent\Pages')
             ->pages([
                 Dashboard::class,
             ])
-            ->discoverWidgets(in: app_path('Filament/Widgets'), for: 'App\Filament\Widgets')
+            ->discoverWidgets(in: app_path('Filament/Parent/Widgets'), for: 'App\Filament\Parent\Widgets')
             ->widgets([
                 AccountWidget::class,
                 FilamentInfoWidget::class,

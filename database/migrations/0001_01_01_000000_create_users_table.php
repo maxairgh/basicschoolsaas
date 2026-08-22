@@ -12,15 +12,32 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('users', function (Blueprint $table) {
-         $table->id();
+   
 
-    // Multi-tenancy
-    //$table->foreignId('school_id')
-      //  ->nullable()
-        //->constrained()
-        //->nullOnDelete();
+    $table->id();
 
-    // Identity
+    /*
+    |--------------------------------------------------------------------------
+    | Multi-tenancy
+    |--------------------------------------------------------------------------
+    */
+    $table->foreignId('school_id')
+        ->nullable()
+        ->constrained()
+        ->nullOnDelete();
+
+    /*
+    |--------------------------------------------------------------------------
+    | Account Type
+    |--------------------------------------------------------------------------
+    */
+    $table->string('user_type');
+
+    /*
+    |--------------------------------------------------------------------------
+    | Identity
+    |--------------------------------------------------------------------------
+    */
     $table->string('employee_no')->nullable()->index();
 
     $table->string('first_name');
@@ -28,31 +45,42 @@ return new class extends Migration
     $table->string('last_name');
 
     $table->string('email')->nullable()->unique();
-    $table->string('phone', 20)->nullable()->index();
+    $table->string('phone', 20)->nullable()->unique();
 
     $table->string('password');
 
-    // Profile
+    /*
+    |--------------------------------------------------------------------------
+    | Profile
+    |--------------------------------------------------------------------------
+    */
     $table->string('avatar')->nullable();
 
-    $table->enum('gender', [
-        'male',
-        'female'
-    ])->nullable();
-
-    $table->date('date_of_birth')->nullable();
-
-    // Security
+    /*
+    |--------------------------------------------------------------------------
+    | Verification
+    |--------------------------------------------------------------------------
+    */
     $table->timestamp('email_verified_at')->nullable();
     $table->timestamp('phone_verified_at')->nullable();
 
-    $table->timestamp('last_login_at')->nullable();
-    $table->ipAddress('last_login_ip')->nullable();
+    /*
+    |--------------------------------------------------------------------------
+    | Onboarding
+    |--------------------------------------------------------------------------
+    */
+    $table->boolean('profile_completed')->default(false);
+    $table->boolean('must_change_password')->default(true);
 
-    // Status
+    /*
+    |--------------------------------------------------------------------------
+    | Status
+    |--------------------------------------------------------------------------
+    */
     $table->boolean('is_active')->default(true);
 
     $table->rememberToken();
+
     $table->timestamps();
     $table->softDeletes();
         });

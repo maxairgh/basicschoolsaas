@@ -15,8 +15,11 @@
        
         {{ $slot }}
         
-         @filamentScripts
-      
+        <div>
+         @livewire('notifications')
+        </div>
+
+        @filamentScripts
         @livewireScripts
           
     </body>

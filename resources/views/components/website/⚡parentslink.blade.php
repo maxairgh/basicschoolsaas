@@ -181,7 +181,7 @@ Parent Portal Section
 
                 <div class="mt-10 flex flex-wrap gap-4">
 
-                    <a href="#"
+                    <a href="{{ route('filament.parent.auth.login') }}"
                        class="rounded-xl bg-white px-8 py-4 font-semibold text-blue-700 shadow-lg transition hover:bg-slate-100">
 
                         Parent Login

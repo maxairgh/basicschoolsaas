@@ -61,7 +61,7 @@ new class extends Component
 
                     </a>
 
-                    <a href="#"
+                    <a href="{{ route('filament.school.auth.login') }}"
                        class="px-8 py-4 rounded-xl border border-slate-300 hover:bg-white transition">
 
                         School Login

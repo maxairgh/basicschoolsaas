@@ -10,9 +10,6 @@ enum SchoolApplicationStatus: string
 
     case REJECTED = 'rejected';
 
-    case CONVERTED = 'converted';
-
-
     public function label(): string
     {
         return match($this) {
@@ -23,7 +20,7 @@ enum SchoolApplicationStatus: string
 
             self::REJECTED => 'Rejected',
 
-            self::CONVERTED => 'Converted',
+          
 
         };
     }
@@ -39,8 +36,8 @@ enum SchoolApplicationStatus: string
 
             self::REJECTED => 'danger',
 
-            self::CONVERTED => 'primary',
-
         };
     }
+
+    
 }

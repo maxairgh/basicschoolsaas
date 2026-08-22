@@ -36,19 +36,19 @@ new class extends Component
 
             <div class="hidden lg:flex items-center gap-8">
 
-                <a href="#features" class="hover:text-blue-600 transition">
+                <a href="{{ url('/#features') }}" class="hover:text-blue-600 transition">
                     Features
                 </a>
 
-                <a href="#benefits" class="hover:text-blue-600 transition">
+                <a href="{{ url('/#benefits') }}" class="hover:text-blue-600 transition">
                     Benefits
                 </a>
 
-                <a href="#parents" class="hover:text-blue-600 transition">
+                <a href="{{ url('/#parents') }}" class="hover:text-blue-600 transition">
                     Parent Portal
                 </a>
 
-                <a href="#contact" class="hover:text-blue-600 transition">
+                <a href="{{ url('/#contact') }}" class="hover:text-blue-600 transition">
                     Contact
                 </a>
 
@@ -56,17 +56,17 @@ new class extends Component
 
             <div class="hidden lg:flex items-center gap-3">
 
-                <a href="#"
+                <a href="{{ route('filament.school.auth.login') }}"
                    class="px-5 py-2.5 rounded-lg border border-slate-300 hover:bg-slate-100 transition">
                     School Login
                 </a>
 
-                <a href="#parent-login"
+                <a href="{{ route('filament.parent.auth.login') }}"
                    class="px-5 py-2.5 rounded-lg border border-blue-600 text-blue-600 hover:bg-blue-50 transition">
                     Parent Login
                 </a>
 
-                <a href="#"
+                <a href="{{ route('schoolsignup') }}"
                    class="px-6 py-3 rounded-xl bg-blue-600 text-white font-semibold hover:bg-blue-700 transition shadow-lg">
                     Start Free Trial
                 </a>

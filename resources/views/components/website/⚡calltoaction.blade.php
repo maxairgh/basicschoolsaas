@@ -52,7 +52,7 @@ Call To Action
 
             </a>
 
-            <a href="#"
+            <a href="{{ route('filament.school.auth.login') }}"
                class="rounded-xl border border-white px-8 py-4 text-lg font-semibold text-white transition hover:bg-white hover:text-blue-700">
 
                 School Login

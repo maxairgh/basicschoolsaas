@@ -3,53 +3,41 @@
 namespace App\Models;
 
 use App\Enums\SchoolApplicationStatus;
+use App\Models\District;
+use App\Models\Region;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
-use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 class SchoolApplication extends Model
 {
-     use HasFactory;
+    use HasFactory;
     use SoftDeletes;
 
 
     protected $fillable = [
 
-        /*
-        School Information
-        */
+        /*School Information*/
         'school_name',
         'school_type',
         'location',
-        'region',
-        'district',
+        'region_id',
+        'district_id',
 
-
-        /*
-        Contact
-        */
+        /*Contact*/
         'contact_name',
         'email',
         'phone',
 
-
-        /*
-        School Size
-        */
+        /*School Size*/
         'student_count',
         'teacher_count',
 
-
-        /*
-        Application
-        */
+        /*Application*/
         'message',
         'status',
 
-
-        /*
-        Review
-        */
+        /* Review */
         'reviewed_by',
         'reviewed_at',
         'admin_notes',
@@ -60,15 +48,10 @@ class SchoolApplication extends Model
     protected function casts(): array
     {
         return [
-
             'status' => SchoolApplicationStatus::class,
-
             'reviewed_at' => 'datetime',
-
             'student_count' => 'integer',
-
             'teacher_count' => 'integer',
-
         ];
     }
 
@@ -116,7 +99,6 @@ class SchoolApplication extends Model
     }
 
 
-
     /*
     |--------------------------------------------------------------------------
     | Actions
@@ -124,20 +106,15 @@ class SchoolApplication extends Model
     */
 
 
-    public function approve(User $user): void
+    public function approve(User $user, ?string $note = null): void
     {
         $this->update([
-
             'status' => SchoolApplicationStatus::APPROVED,
-
             'reviewed_by' => $user->id,
-
-            'reviewed_at' => now(),
-
+                'reviewed_at' => now(),
+                'admin_notes' => $this->admin_notes . now(). "\n" . $note,
         ]);
     }
-
-
 
     public function reject(
         User $user,
@@ -152,8 +129,24 @@ class SchoolApplication extends Model
 
             'reviewed_at' => now(),
 
-            'admin_notes' => $note,
+            'admin_notes' => $this->admin_notes . $note,
 
         ]);
+    }
+
+    /**
+     * Get the region where the school is located.
+     */
+    public function region()
+    {
+        return $this->belongsTo(Region::class);
+    }
+
+    /**
+     * Get the district where the school is located.
+     */
+    public function district()
+    {
+        return $this->belongsTo(District::class);
     }
 }

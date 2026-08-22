@@ -1,26 +1,26 @@
 <?php
 
 use Livewire\Component;
-use Filament\Forms\Components\MarkdownEditor;
 use Filament\Forms\Components\TextInput;
 use Filament\Schemas\Concerns\InteractsWithSchemas;
-use Filament\Schemas\Concerns\RestrictsFileUploadsToSchemaComponents;
 use Filament\Schemas\Contracts\HasSchemas;
-use Illuminate\Contracts\View\View;
 use Filament\Schemas\Components\Wizard;
-use Filament\Schemas\Components\Wizard\Step;
 use Filament\Forms\Components\Select;
 use Filament\Schemas\Schema;
-use App\Enums\GhanaRegion;
-use App\Enums\GhanaDistrict; 
 use Filament\Forms\Components\Textarea;
-use Filament\Actions\Action;
 use Illuminate\Support\HtmlString;
+use Filament\Notifications\Notification;
+use Illuminate\Support\Facades\Log;
+use App\Models\Region;
+use App\Models\District;
+use App\Models\SchoolApplication;
+use Filament\Schemas\Components\Utilities\Get;
+use App\Mail\SchoolApplicationSubmitted;
+use Illuminate\Support\Facades\Mail;
 
 new class extends Component implements HasSchemas
 {
     use InteractsWithSchemas;
-   //use RestrictsFileUploadsToSchemaComponents;
 
      public ?array $data = [];
     
@@ -35,7 +35,6 @@ new class extends Component implements HasSchemas
             ->components([
                       Wizard::make([
 
-
                     /*
                     |--------------------------------------------------------------------------
                     | Step 1: School Information
@@ -48,59 +47,49 @@ new class extends Component implements HasSchemas
 
 
                             TextInput::make('school_name')
-
                                 ->label('School Name')
-
                                 ->placeholder('Example: Bright Future Academy')
-
+                                ->unique( 
+                                    table: 'school_applications',
+                                    column: 'school_name',
+                                    )
                                 ->required()
-
+                                ->dehydrateStateUsing(fn ($state) => trim($state))
                                 ->maxLength(255),
 
-
-
                             Select::make('school_type')
-
                                 ->label('School Type')
-
                                 ->options([
-
                                     'private' => 'Private School',
-
                                     'public' => 'Public School',
                                 ])
-
                                 ->default('private')
-
                                 ->required(),
 
+                    Select::make('region_id')
+                        ->label('Region')
+                        ->options(fn () => Region::orderBy('region_name')->pluck('region_name', 'id'))
+                        ->searchable()
+                        ->live()
+                        ->required()
+                        ->afterStateUpdated(fn ($set) => $set('district_id', null)),
 
+                    Select::make('district_id')
+                        ->label('District')
+                        ->options(function (Get $get) {
+                            $regionId = $get('region_id');
 
-                            Select::make('region')
+                            if (! $regionId) {
+                                return [];
+                            }
 
-                                ->label('Region')
-
-                                ->options(
-                                    GhanaRegion::options()
-                                )
-
-                                ->searchable()
-
-                                ->required(),
-
-
-
-                            Select::make('district')
-
-                                ->label('District')
-
-                                ->options(
-                                    GhanaDistrict::options()
-                                )
-
-                                ->searchable()
-
-                                ->required(),
+                            return District::where('region_id', $regionId)
+                                ->orderBy('district_name')
+                                ->pluck('district_name', 'id');
+                        })
+                        ->searchable()
+                        ->required()
+                        ->disabled(fn (Get $get) => blank($get('region_id'))),
 
 
 
@@ -237,10 +226,54 @@ new class extends Component implements HasSchemas
             
     }
     
-    public function create(): void
-    {
-        dd($this->form->getState());
+   public function create(): void
+{
+    try {
+        $data = collect($this->form->getState())
+            ->only([
+                'school_name',
+                'school_type',
+                'location',
+                'region_id',
+                'district_id',
+                'contact_name',
+                'email',
+                'phone',
+                'student_count',
+                'teacher_count',
+                'message',
+            ])
+            ->toArray();
+
+        $data['status'] = 'pending';
+
+        $application = SchoolApplication::create($data);
+
+        Mail::to($application->email)
+       ->queue(new SchoolApplicationSubmitted($application));
+
+        $this->form->fill();
+
+        Notification::make()
+            ->title('Application Submitted')
+            ->body('Your application has been submitted successfully. Our team will review it shortly. Once your application has been approved, you will receive an email with the next steps.')
+            ->persistent()
+            ->success()
+            ->send();
+
+    } catch (\Throwable $e) {
+
+        Log::error('Application submission failed', [
+            'message' => $e->getMessage(),
+        ]);
+
+        Notification::make()
+            ->title('Submission Failed')
+            ->body('Something went wrong. Please try again.'.$e->getMessage())
+            ->danger()
+            ->send();
     }
+}
 
 };
 ?>

@@ -55,13 +55,7 @@ Footer
 
                 <div class="mt-6 flex gap-4">
 
-                    <a href="https://www.hrdsystems.net"
-                       target="_blank"
-                       class="text-blue-400 hover:text-white">
-
-                        🌐 Main Website
-
-                    </a>
+                   
 
                 </div>
 
@@ -79,25 +73,39 @@ Footer
                 <ul class="mt-6 space-y-3">
 
                     <li>
-                        <a href="#features" class="hover:text-white">
-                            Features
-                        </a>
+                        <a href="https://www.hrdsystems.net"
+                       target="_blank"
+                       class="text-blue-400 hover:text-white">
+
+                        🌐 Main Website
+
+                    </a>              
+                    </li>
+                   
+                    <li>
+                        <a href="https://www.rexonline.hrdsystems.net"
+                       target="_blank"
+                       class="text-blue-400 hover:text-white">
+
+                        🌐 Rexonline - SHS Portal
+
+                    </a>              
                     </li>
 
                     <li>
-                        <a href="#benefits" class="hover:text-white">
+                        <a href="{{ url('/#benefits') }}" class="hover:text-white">
                             Benefits
                         </a>
                     </li>
 
                     <li>
-                        <a href="#parents" class="hover:text-white">
+                        <a href="{{ url('/#parents') }}" class="hover:text-white">
                             Parent Portal
                         </a>
                     </li>
 
                     <li>
-                        <a href="#" class="hover:text-white">
+                        <a href="{{ url('/#contact') }}" class="hover:text-white">
                             Free Trial
                         </a>
                     </li>
@@ -119,7 +127,7 @@ Footer
 
                     <li>
 
-                        <a href="#" class="hover:text-white">
+                        <a href="{{ route('filament.school.auth.login') }}" class="hover:text-white">
 
                             School Login
 
@@ -129,10 +137,16 @@ Footer
 
                     <li>
 
-                        <a href="#" class="hover:text-white">
-
+                        <a href="{{ route('filament.parent.auth.login') }}" class="hover:text-white">
                             Parent Login
+                        </a>
 
+                    </li>
+
+                     <li>
+
+                        <a href="{{ route('filament.admin.auth.login') }}" class="hover:text-white">
+                            Admin Login
                         </a>
 
                     </li>

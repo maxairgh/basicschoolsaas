@@ -21,7 +21,7 @@ return new class extends Migration
             |--------------------------------------------------------------------------
             */
 
-            $table->string('school_name');
+            $table->string('school_name')->unique();;
 
             $table->string('school_type')
                 ->default('private');
@@ -29,11 +29,15 @@ return new class extends Migration
             $table->string('location')
                 ->nullable();
 
-            $table->string('region')
-                ->nullable();
+            $table->foreignId('region_id')
+                ->constrained('regions')
+                ->cascadeOnUpdate()
+                ->restrictOnDelete();
 
-            $table->string('district')
-                ->nullable();
+            $table->foreignId('district_id')
+                ->constrained('districts')
+                ->cascadeOnUpdate()
+                ->restrictOnDelete();
 
 
             /*
@@ -44,10 +48,10 @@ return new class extends Migration
 
             $table->string('contact_name');
 
-            $table->string('email')
+            $table->string('email')->unique()
                 ->index();
 
-            $table->string('phone');
+            $table->string('phone')->unique();
 
 
             /*
