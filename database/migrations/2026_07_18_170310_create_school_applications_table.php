@@ -46,7 +46,8 @@ return new class extends Migration
             |--------------------------------------------------------------------------
             */
 
-            $table->string('contact_name');
+            $table->string('contact_person_firstname');
+            $table->string('contact_person_lastname');
 
             $table->string('email')->unique()
                 ->index();

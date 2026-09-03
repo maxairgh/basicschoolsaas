@@ -3,10 +3,15 @@
 namespace App\Filament\Admin\Resources\SchoolApplications\Schemas;
 
 use App\Enums\SchoolApplicationStatus;
+use App\Mail\SchoolSignupApprovalEmail;
 use App\Models\District;
 use App\Models\Region;
+use App\Models\School;
 use App\Models\SchoolApplication;
+use App\Models\User;
+use App\Services\SchoolApplicationApprovalService;
 use Filament\Actions\Action;
+use Filament\Facades\Filament;
 use Filament\Forms\Components\DateTimePicker;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Textarea;
@@ -16,8 +21,12 @@ use Filament\Schemas\Components\Section;
 use Filament\Schemas\Components\Utilities\Get;
 use Filament\Schemas\Schema;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Mail;
+use Illuminate\Support\Facades\Password;
 use Illuminate\Support\Str;
-use Exception;
+use Livewire\Component;
+use RuntimeException;
 
 class SchoolApplicationForm
 {
@@ -85,7 +94,7 @@ class SchoolApplicationForm
     ->columns(3)
     ->afterHeader([
         Action::make('Take Action')
-        ->hidden(fn (Get $get) => $get('status') == 'pending')
+       //->hidden(fn (Get $get) => $get('status') !== 'PENDING')
         ->color('danger')
         ->icon('heroicon-o-check-circle')
         ->schema([
@@ -94,18 +103,48 @@ class SchoolApplicationForm
                     ->required(),
                      Textarea::make('admin_notes'),
     ])
-        ->action(function (array $data, SchoolApplication $record){
-             
+        ->action(function (Component $livewire, array $data, SchoolApplication $record){
+            
+         //check if the school has already been approved
+               if ($record->status === SchoolApplicationStatus::APPROVED || $record->status === SchoolApplicationStatus::REJECTED) {
+                              
+               Notification::make()
+                ->title('School Application Already Processed')
+                ->body('The school application has already been processed.')  
+                ->warning()   
+                ->send();
+                return;
+                
+                 }
+
             if ($data['new_status'] === SchoolApplicationStatus::APPROVED) {
-                $record->approve(Auth()->user(), $data['admin_notes']); 
+              
+             $feedback = app(SchoolApplicationApprovalService::class)->approve(
+                    application: $record,
+                    reviewer: auth()->user(),
+                    note: $data['admin_notes'],
+                );
+
+            $livewire->refreshFormData([
+                'status',
+                'reviewed_by',
+                'reviewed_at',
+                'admin_notes',
+            ]);
+
+         $token = Password::broker()->createToken($feedback['admin']);
+        
+         $password_reset_link = Filament::getPanel('school')->getResetPasswordUrl($token, $feedback['admin']);  
                 Notification::make()
                 ->title('Application Approved')
                 ->body('The school application has been approved successfully.')
                 ->success()
                 ->send(); 
-                //send email to the contact persona
-
+                
+                //send email to the contact personal
+                Mail::to($feedback['admin']->email)->queue(new SchoolSignupApprovalEmail($feedback['school'], $password_reset_link));
                 //create the school and admin user account for the school
+            
 
             } elseif ($data['new_status'] === SchoolApplicationStatus::REJECTED) {
                  $record->reject(Auth()->user(), $data['admin_notes']);  
@@ -128,55 +167,36 @@ class SchoolApplicationForm
     ->schema([
                 Select::make('status')
                     ->options(SchoolApplicationStatus::class)
-                    ->default('pending')
                     ->disabled()
                     ->required(),
                 
-              TextInput::make('reviewer.full_name')
-                ->label('Reviewed By')
-                ->disabled(),
+             Select::make('reviewer')
+    ->label('Reviewed By')
+    ->relationship('reviewer', 'first_name')
+    ->getOptionLabelFromRecordUsing(
+        fn ($record) => $record->full_name
+    )
+    ->disabled()
+    ->required(),    
+              
+
               DateTimePicker::make('reviewed_at')
-                    ->readOnly(),
+                    ->disabled(),
               Textarea::make('admin_notes')
-                    ->readOnly()
+                    ->disabled()
                     ->columnSpanFull(),
         ]),
             ]);
     }
 
-    function createSchoolAndAdminUser(SchoolApplication $application): void
-    {
+    public function approveSchool(array $data, SchoolApplication $record): void
+{
+   
 
-    DB::transaction(function () use ($application) {
-        // Create the school record
-        $school = School::create([
-            'name' => $application->school_name,
-            'type' => $application->school_type,
-            'location' => $application->location,
-            'region_id' => $application->region_id,
-            'district_id' => $application->district_id,
-            'contact_name' => $application->contact_name,
-            'email' => $application->email,
-            'phone' => $application->phone,
-            'student_count' => $application->student_count,
-            'teacher_count' => $application->teacher_count,
-        ]);
-
-        // Create the admin user for the school
-        User::create([
-            'school_id' => $school->id,
-            'user_type' => 'admin',
-            'first_name' => $application->contact_name, // Assuming contact name is the first name
-            'email' => $application->email,
-            'phone' => $application->phone,
-            'password' => bcrypt(Str::random(12)), // Generate a random password
-        ]);
-
-            DB::commit();
-        } catch (\Exception $e) {
-            DB::rollBack();
-            // rethrow or handle/log as appropriate
-            throw $e;
-        }
-    }
+    $this->notify(
+        'success',
+        "School {$school->school_name} has been approved successfully."
+    );
+}
+    
 }

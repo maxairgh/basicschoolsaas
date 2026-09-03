@@ -25,7 +25,8 @@ class SchoolApplication extends Model
         'district_id',
 
         /*Contact*/
-        'contact_name',
+        'contact_person_firstname',
+        'contact_person_lastname',
         'email',
         'phone',
 
@@ -44,7 +45,6 @@ class SchoolApplication extends Model
 
     ];
 
-
     protected function casts(): array
     {
         return [
@@ -55,14 +55,11 @@ class SchoolApplication extends Model
         ];
     }
 
-
-
     /*
     |--------------------------------------------------------------------------
     | Relationships
     |--------------------------------------------------------------------------
     */
-
 
     public function reviewer()
     {
@@ -72,14 +69,11 @@ class SchoolApplication extends Model
         );
     }
 
-
-
     /*
     |--------------------------------------------------------------------------
     | Scopes
     |--------------------------------------------------------------------------
     */
-
 
     public function scopePending($query)
     {
@@ -89,7 +83,6 @@ class SchoolApplication extends Model
         );
     }
 
-
     public function scopeApproved($query)
     {
         return $query->where(
@@ -98,39 +91,29 @@ class SchoolApplication extends Model
         );
     }
 
-
     /*
     |--------------------------------------------------------------------------
     | Actions
     |--------------------------------------------------------------------------
     */
 
-
     public function approve(User $user, ?string $note = null): void
     {
         $this->update([
             'status' => SchoolApplicationStatus::APPROVED,
             'reviewed_by' => $user->id,
-                'reviewed_at' => now(),
-                'admin_notes' => $this->admin_notes . now(). "\n" . $note,
+            'reviewed_at' => now(),
+             'admin_notes' => $this->admin_notes ."\n\n" . now() . "\n" . $note,
         ]);
     }
 
-    public function reject(
-        User $user,
-        ?string $note = null
-    ): void
+    public function reject( User $user, ?string $note = null ): void
     {
         $this->update([
-
             'status' => SchoolApplicationStatus::REJECTED,
-
             'reviewed_by' => $user->id,
-
             'reviewed_at' => now(),
-
-            'admin_notes' => $this->admin_notes . $note,
-
+            'admin_notes' =>  $this->admin_notes ."\n\n" . now() . "\n" . $note,
         ]);
     }
 

@@ -2,12 +2,17 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Concerns\HasUniqueStringIds;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Ramsey\Uuid\Uuid;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
 class School extends Model
-{
+ {
+    
+use HasUniqueStringIds, SoftDeletes; 
+       
     protected $fillable = [
         'serial',
         'school_name',
@@ -17,8 +22,7 @@ class School extends Model
         'postal_address', 
         'location', 
         'digital_address', 
-        'schoo_type', 
-        'region', 
+        'school_type', 
         'head_signature',
         'school_badge',
         'school_type',
@@ -28,7 +32,9 @@ class School extends Model
         'status', 
         'service_name', 
         'admission_letter', 
-        'settings'
+        'settings',
+        'region_id',
+        'district_id',
     ];
 
        /**
@@ -44,14 +50,22 @@ public function newUniqueId(): string
  *
  * @return array<int, string>
  */
-public function uniqueIds(): array
-{
-    return ['serial'];
-}
+    public function uniqueIds(): array
+    {
+        return ['serial'];
+    }
+
+/**
+     * Determine if the given unique ID is valid.
+     */
+    protected function isValidUniqueId(mixed $value): bool
+    {
+        return is_string($value) && Uuid::isValid($value);
+    }
 
     protected function users():HasMany
     {
-        return $this->hasMany(User::class);
+       //  return $this->hasMany(User::class);
     }
 
     public function learners():HasMany

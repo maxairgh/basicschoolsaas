@@ -1,56 +1,57 @@
 <?php
 
-namespace App\Filament\Admin\Resources\SchoolApplications\Tables;
+namespace App\Filament\Admin\Resources\Schools\Tables;
 
 use Filament\Actions\BulkActionGroup;
 use Filament\Actions\DeleteBulkAction;
 use Filament\Actions\EditAction;
-use Filament\Actions\ForceDeleteBulkAction;
-use Filament\Actions\RestoreBulkAction;
+use Filament\Actions\ViewAction;
 use Filament\Tables\Columns\TextColumn;
-use Filament\Tables\Filters\TrashedFilter;
 use Filament\Tables\Table;
 
-class SchoolApplicationsTable
+class SchoolsTable
 {
     public static function configure(Table $table): Table
     {
         return $table
             ->columns([
-                TextColumn::make('status')
-                    ->badge()
+                TextColumn::make('serial')
                     ->searchable(),
                 TextColumn::make('school_name')
                     ->searchable(),
-                TextColumn::make('school_type')
+                TextColumn::make('mobile_number')
+                    ->searchable(),
+                TextColumn::make('email_address')
+                    ->searchable(),
+                TextColumn::make('tag_line')
+                    ->searchable(),
+                TextColumn::make('postal_address')
                     ->searchable(),
                 TextColumn::make('location')
+                    ->searchable(),
+                TextColumn::make('digital_address')
+                    ->searchable(),
+                TextColumn::make('school_type')
+                    ->searchable(),
+                TextColumn::make('head_signature')
+                    ->searchable(),
+                TextColumn::make('school_badge')
+                    ->searchable(),
+                TextColumn::make('head_name')
+                    ->searchable(),
+                TextColumn::make('head_title')
+                    ->searchable(),
+                TextColumn::make('id_prefix')
+                    ->searchable(),
+                TextColumn::make('status')
+                    ->searchable(),
+                TextColumn::make('service_name')
                     ->searchable(),
                 TextColumn::make('region_id')
                     ->numeric()
                     ->sortable(),
                 TextColumn::make('district_id')
                     ->numeric()
-                    ->sortable(),
-                TextColumn::make('contact_name')
-                    ->searchable(),
-                TextColumn::make('email')
-                    ->label('Email address')
-                    ->searchable(),
-                TextColumn::make('phone')
-                    ->searchable(),
-                TextColumn::make('student_count')
-                    ->numeric()
-                    ->sortable(),
-                TextColumn::make('teacher_count')
-                    ->numeric()
-                    ->sortable(),
-
-                TextColumn::make('reviewer.full_name')
-                    ->numeric()
-                    ->sortable(),
-                TextColumn::make('reviewed_at')
-                    ->dateTime()
                     ->sortable(),
                 TextColumn::make('created_at')
                     ->dateTime()
@@ -60,22 +61,17 @@ class SchoolApplicationsTable
                     ->dateTime()
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
-                TextColumn::make('deleted_at')
-                    ->dateTime()
-                    ->sortable()
-                    ->toggleable(isToggledHiddenByDefault: true),
             ])
             ->filters([
-                TrashedFilter::make(),
+                //
             ])
             ->recordActions([
+                ViewAction::make(),
                 EditAction::make(),
             ])
             ->toolbarActions([
                 BulkActionGroup::make([
                     DeleteBulkAction::make(),
-                    ForceDeleteBulkAction::make(),
-                    RestoreBulkAction::make(),
                 ]),
             ]);
     }

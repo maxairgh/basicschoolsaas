@@ -21,11 +21,9 @@ return new class extends Migration
             $table->string('postal_address')->nullable(); 
             $table->string('location')->nullable(); 
             $table->string('digital_address')->nullable(); 
-            $table->string('schoo_type')->nullable(); 
-            $table->string('region'); 
+            $table->string('school_type')->nullable(); 
             $table->string('head_signature')->nullable();
             $table->string('school_badge')->nullable();
-            $table->string('school_type')->nullable();
             $table->string('head_name')->nullable(); 
             $table->string('head_title')->nullable(); 
             $table->string('id_prefix')->nullable(); 
@@ -33,8 +31,18 @@ return new class extends Migration
             $table->string('service_name')->nullable(); 
             $table->text('admission_letter')->nullable(); 
             $table->text('settings')->nullable(); 
+            $table->foreignId('region_id')
+                ->nullable()
+                ->constrained('regions')
+                ->cascadeOnUpdate()
+                ->restrictOnDelete();
+            $table->foreignId('district_id')
+                ->nullable()
+                ->constrained('districts')
+                ->cascadeOnUpdate()
+                ->restrictOnDelete();
             $table->timestamps();
-            $table->timestamps();
+            $table->softDeletes();
         });
     }
 

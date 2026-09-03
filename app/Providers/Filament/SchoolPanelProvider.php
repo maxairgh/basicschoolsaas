@@ -31,6 +31,7 @@ class SchoolPanelProvider extends PanelProvider
             ->id('school')
             ->path('school') 
             ->login(Login::class)
+            ->passwordReset()
             ->colors([
                 'primary' => Color::Blue,
             ])

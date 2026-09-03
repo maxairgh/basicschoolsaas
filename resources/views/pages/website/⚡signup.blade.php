@@ -118,16 +118,21 @@ new class extends Component implements HasSchemas
 
                         ->schema([
 
+                            TextInput::make('contact_person_firstname')
 
-                            TextInput::make('contact_name')
+                                ->label('Contact Person First Name')
 
-                                ->label('Contact Person Name')
-
-                                ->placeholder('Headteacher / Proprietor')
+                                ->placeholder('First Name')
 
                                 ->required(),
 
+                            TextInput::make('contact_person_lastname')
 
+                                ->label('Contact Person Last Name')
+
+                                ->placeholder('Last Name')  
+
+                                ->required(),
 
                             TextInput::make('email')
 
@@ -136,8 +141,6 @@ new class extends Component implements HasSchemas
                                 ->email()
 
                                 ->required(),
-
-
 
                             TextInput::make('phone')
 
@@ -236,7 +239,8 @@ new class extends Component implements HasSchemas
                 'location',
                 'region_id',
                 'district_id',
-                'contact_name',
+                'contact_person_firstname',
+                'contact_person_lastname',
                 'email',
                 'phone',
                 'student_count',

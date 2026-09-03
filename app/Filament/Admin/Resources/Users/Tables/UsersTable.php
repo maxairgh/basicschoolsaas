@@ -19,7 +19,7 @@ class UsersTable
     {
         return $table
             ->columns([
-                TextColumn::make('school_id')
+                TextColumn::make('school.school_name')
                     ->numeric()
                     ->sortable(),
                 TextColumn::make('user_type')

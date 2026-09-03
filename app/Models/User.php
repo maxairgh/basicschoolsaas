@@ -33,7 +33,6 @@ class User extends Authenticatable implements FilamentUser, HasName
         */
         'school_id',
 
-
         /*
         |--------------------------------------------------------------------------
         | Account Type
@@ -41,20 +40,15 @@ class User extends Authenticatable implements FilamentUser, HasName
         */
         'user_type',
 
-
         /*
         |--------------------------------------------------------------------------
         | Identity
         |--------------------------------------------------------------------------
         */
         'employee_no',
-
         'first_name',
-
         'middle_name',
-
         'last_name',
-
 
         /*
         |--------------------------------------------------------------------------
@@ -62,11 +56,8 @@ class User extends Authenticatable implements FilamentUser, HasName
         |--------------------------------------------------------------------------
         */
         'email',
-
         'phone',
-
         'password',
-
 
         /*
         |--------------------------------------------------------------------------
@@ -74,11 +65,8 @@ class User extends Authenticatable implements FilamentUser, HasName
         |--------------------------------------------------------------------------
         */
         'avatar',
-
         'profile_completed',
-
         'must_change_password',
-
         'is_active',
     ];
 
@@ -89,13 +77,9 @@ class User extends Authenticatable implements FilamentUser, HasName
      * @var list<string>
      */
     protected $hidden = [
-
         'password',
-
         'remember_token',
-
     ];
-
 
     /**
      * The attributes that should be cast.
@@ -112,11 +96,8 @@ class User extends Authenticatable implements FilamentUser, HasName
             |--------------------------------------------------------------------------
             */
             'email_verified_at' => 'datetime',
-
             'phone_verified_at' => 'datetime',
-
             'password' => 'hashed',
-
 
             /*
             |--------------------------------------------------------------------------
@@ -124,11 +105,8 @@ class User extends Authenticatable implements FilamentUser, HasName
             |--------------------------------------------------------------------------
             */
             'profile_completed' => 'boolean',
-
             'must_change_password' => 'boolean',
-
             'is_active' => 'boolean',
-
 
             /*
             |--------------------------------------------------------------------------
@@ -167,7 +145,6 @@ class User extends Authenticatable implements FilamentUser, HasName
         return $this->hasOne(UserProfile::class);
     }
 
-
     /**
      * Login history
      */
@@ -176,13 +153,11 @@ class User extends Authenticatable implements FilamentUser, HasName
         return $this->hasMany(LoginHistory::class);
     }
 
-
     /*
     |--------------------------------------------------------------------------
     | Accessors
     |--------------------------------------------------------------------------
     */
-
 
     public function getFullNameAttribute(): string
     {
@@ -195,31 +170,26 @@ class User extends Authenticatable implements FilamentUser, HasName
         ->implode(' ');
     }
 
-
     /*
     |--------------------------------------------------------------------------
     | User Type Helpers
     |--------------------------------------------------------------------------
     */
 
-
     public function isSystemUser(): bool
     {
         return $this->user_type === UserType::SYSTEM;
     }
-
 
     public function isSchoolUser(): bool
     {
         return $this->user_type === UserType::SCHOOL;
     }
 
-
     public function isParent(): bool
     {
         return $this->user_type === UserType::PARENT;
     }
-
 
     /**
      * Check if user completed profile
