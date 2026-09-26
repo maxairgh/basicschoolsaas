@@ -28,10 +28,7 @@ return new class extends Migration
             | Personal Information
             |--------------------------------------------------------------------------
             */
-            $table->enum('gender', [
-                'male',
-                'female',
-            ])->nullable();
+            $table->string('gender')->nullable();
 
             $table->date('date_of_birth')
                 ->nullable();

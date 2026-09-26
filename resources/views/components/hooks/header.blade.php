@@ -1,14 +1,11 @@
-@php
-    $user = auth()->user();
-@endphp
-
-<div class="flex items-center space-x-3">
-    <img 
-        src="{{ asset('storage/'.$user->photo) }}" 
-        alt="{{ $user->username }}" 
-        class="w-10 h-10 rounded-full object-cover border border-gray-300 dark:border-gray-600"
+<div style="display: flex; align-items: center; gap: 12px;">
+    <img
+        src="{{ asset('storage/' . auth()->user()->school?->school_badge ?? '') }}"
+        alt="School Badge"
+        style="width: 48px; height: 48px; border-radius: 50%; object-fit: cover;"
     >
-    <span class="text-sm font-medium text-gray-700 dark:text-gray-300">
-        {{ $user->name }}
-    </span>
+
+    <strong style="font-size: 16px; white-space: nowrap;">
+        {{ auth()->user()->school->school_name ?? '' }}
+    </strong>
 </div>

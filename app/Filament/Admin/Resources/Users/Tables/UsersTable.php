@@ -18,6 +18,7 @@ class UsersTable
     public static function configure(Table $table): Table
     {
         return $table
+        
             ->columns([
                 TextColumn::make('school.school_name')
                     ->numeric()

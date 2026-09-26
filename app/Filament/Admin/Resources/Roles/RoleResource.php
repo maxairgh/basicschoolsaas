@@ -2,6 +2,7 @@
 
 namespace App\Filament\Admin\Resources\Roles;
 
+use App\enums\Panel;
 use App\Filament\Admin\Resources\Roles\Pages\ManageRoles;
 use App\Models\Role;
 use BackedEnum;
@@ -16,12 +17,15 @@ use Filament\Schemas\Schema;
 use Filament\Support\Icons\Heroicon;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
+use UnitEnum;
 
 class RoleResource extends Resource
 {
     protected static ?string $model = Role::class;
 
     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedRectangleStack;
+    protected static string | UnitEnum | null $navigationGroup = 'User Management';
+    protected static ?int $navigationSort = 2;
 
     protected static ?string $recordTitleAttribute = 'name';
 
@@ -30,6 +34,10 @@ class RoleResource extends Resource
         return $schema
             ->components([
                 TextInput::make('name'),
+                Select::make('panel')
+                ->options(Panel::class)
+                ->required()
+                ->native(false),
             Select::make('Permissions') 
             ->multiple()
             ->Relationship('Permissions', 'name')
@@ -44,6 +52,8 @@ class RoleResource extends Resource
             ->recordTitleAttribute('name')
             ->columns([
                 TextColumn::make('name')
+                    ->searchable(),
+               TextColumn::make('panel')
                     ->searchable(),
               TextColumn::make('permissions.name')
                     ->label('Permissions')

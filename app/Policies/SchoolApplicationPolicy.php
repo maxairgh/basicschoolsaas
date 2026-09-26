@@ -84,4 +84,15 @@ class SchoolApplicationPolicy
         };
         return false;
     }
+
+      /**
+     * Determine whether the user can permanently delete the model.
+     */
+    public function approval(User $user, SchoolApplication $schoolApplication): bool
+    {
+          if ($user->hasAllPermissions(['SchoolApplication.Approval'])){
+            return true;
+        };
+        return false;
+    }
 }

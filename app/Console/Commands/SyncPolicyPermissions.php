@@ -9,12 +9,26 @@ use Spatie\Permission\Models\Permission;
 class SyncPolicyPermissions extends Command
 {
     protected $signature = 'permissions:sync
-                            {--clean : Remove permissions no longer referenced by policies}';
+                            {--clean : Remove permissions no longer referenced by policies or standalone permissions}';
 
-    protected $description = 'Synchronize Spatie permissions from policy files';
+    protected $description = 'Synchronize Spatie permissions from policy files and standalone permissions';
 
     public function handle(): int
     {
+        /*
+        |--------------------------------------------------------------------------
+        | Permissions not tied to a policy
+        |--------------------------------------------------------------------------
+        |
+        | These permissions are managed manually and may be used directly
+        | in Filament, navigation, actions, middleware, etc.
+        |
+        */
+
+        $standalonePermissions = [
+            'Profile.edit',
+        ];
+
         $policyPath = app_path('Policies');
 
         if (! File::isDirectory($policyPath)) {
@@ -30,11 +44,16 @@ class SyncPolicyPermissions extends Command
 
         $policyFiles = File::allFiles($policyPath);
 
-        $this->info("Policy files found: " . count($policyFiles));
+        $this->info('Policy files found: ' . count($policyFiles));
         $this->newLine();
 
-        foreach ($policyFiles as $file) {
+        /*
+        |--------------------------------------------------------------------------
+        | Scan Policy Files
+        |--------------------------------------------------------------------------
+        */
 
+        foreach ($policyFiles as $file) {
             if (strtolower($file->getExtension()) !== 'php') {
                 continue;
             }
@@ -66,10 +85,9 @@ class SyncPolicyPermissions extends Command
             $filePermissions = [];
 
             foreach ($matches[1] ?? [] as $permissionBlock) {
-
                 /*
                 |--------------------------------------------------------------------------
-                | Extract quoted strings
+                | Extract quoted permission names
                 |--------------------------------------------------------------------------
                 */
 
@@ -80,7 +98,6 @@ class SyncPolicyPermissions extends Command
                 );
 
                 foreach ($permissionMatches[1] ?? [] as $permission) {
-
                     $permission = trim($permission);
 
                     if ($permission === '') {
@@ -105,22 +122,42 @@ class SyncPolicyPermissions extends Command
             );
 
             if (! empty($filePermissions)) {
-
                 $this->info("✓ {$relativePath}");
 
                 foreach (array_unique($filePermissions) as $permission) {
                     $this->line("    → {$permission}");
                 }
-
             } else {
-
                 $this->warn("○ {$relativePath} - no permissions found");
             }
         }
 
         /*
         |--------------------------------------------------------------------------
-        | Remove duplicates
+        | Add Standalone Permissions
+        |--------------------------------------------------------------------------
+        */
+
+        if (! empty($standalonePermissions)) {
+            $this->newLine();
+            $this->info('Standalone permissions:');
+
+            foreach ($standalonePermissions as $permission) {
+                $permission = trim($permission);
+
+                if ($permission === '') {
+                    continue;
+                }
+
+                $permissions[] = $permission;
+
+                $this->line("    → {$permission}");
+            }
+        }
+
+        /*
+        |--------------------------------------------------------------------------
+        | Remove Duplicates
         |--------------------------------------------------------------------------
         */
 
@@ -145,9 +182,8 @@ class SyncPolicyPermissions extends Command
         $this->newLine();
 
         if (empty($permissions)) {
-
             $this->warn(
-                'No permissions were found in the policy files.'
+                'No permissions were found in the policy files or standalone permissions.'
             );
 
             return self::SUCCESS;
@@ -163,24 +199,18 @@ class SyncPolicyPermissions extends Command
         $existing = 0;
 
         foreach ($permissions as $permissionName) {
-
-            $permission = Permission::firstOrCreate(
-                [
-                    'name' => $permissionName,
-                    'guard_name' => 'web',
-                ]
-            );
+            $permission = Permission::firstOrCreate([
+                'name' => $permissionName,
+                'guard_name' => 'web',
+            ]);
 
             if ($permission->wasRecentlyCreated) {
-
                 $created++;
 
                 $this->info(
                     "Created: {$permissionName}"
                 );
-
             } else {
-
                 $existing++;
 
                 $this->line(
@@ -191,15 +221,20 @@ class SyncPolicyPermissions extends Command
 
         /*
         |--------------------------------------------------------------------------
-        | Clean obsolete permissions
+        | Clean Obsolete Permissions
         |--------------------------------------------------------------------------
+        |
+        | A permission will only be considered obsolete if it is NOT:
+        |
+        | 1. Referenced by a policy
+        | 2. Listed as a standalone permission
+        |
         */
 
         $deleted = 0;
         $skipped = 0;
 
         if ($this->option('clean')) {
-
             $this->newLine();
 
             $this->info(
@@ -212,6 +247,11 @@ class SyncPolicyPermissions extends Command
             )->get();
 
             foreach ($databasePermissions as $databasePermission) {
+                /*
+                |--------------------------------------------------------------------------
+                | Permission is still required
+                |--------------------------------------------------------------------------
+                */
 
                 if (in_array(
                     $databasePermission->name,
@@ -228,7 +268,6 @@ class SyncPolicyPermissions extends Command
                 */
 
                 if ($databasePermission->roles()->exists()) {
-
                     $skipped++;
 
                     $this->warn(
@@ -269,6 +308,7 @@ class SyncPolicyPermissions extends Command
             [
                 'Policy Files',
                 'Found',
+                'Standalone',
                 'Created',
                 'Existing',
                 'Removed',
@@ -277,6 +317,7 @@ class SyncPolicyPermissions extends Command
             [[
                 count($policyFiles),
                 count($permissions),
+                count($standalonePermissions),
                 $created,
                 $existing,
                 $deleted,
@@ -287,3 +328,4 @@ class SyncPolicyPermissions extends Command
         return self::SUCCESS;
     }
 }
+

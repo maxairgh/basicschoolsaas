@@ -6,12 +6,14 @@ namespace App\Models;
 use App\Enums\UserType;
 use Filament\Models\Contracts\FilamentUser;
 use Filament\Models\Contracts\HasName;
+use Illuminate\Database\Eloquent\Builder; 
 use Filament\Panel;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Spatie\Permission\Traits\HasRoles;
+use Illuminate\Support\Facades\Auth;
 
 class User extends Authenticatable implements FilamentUser, HasName
 {
@@ -25,45 +27,15 @@ class User extends Authenticatable implements FilamentUser, HasName
      * @var list<string>
      */
     protected $fillable = [
-
-        /*
-        |--------------------------------------------------------------------------
-        | Multi Tenancy
-        |--------------------------------------------------------------------------
-        */
         'school_id',
-
-        /*
-        |--------------------------------------------------------------------------
-        | Account Type
-        |--------------------------------------------------------------------------
-        */
         'user_type',
-
-        /*
-        |--------------------------------------------------------------------------
-        | Identity
-        |--------------------------------------------------------------------------
-        */
         'employee_no',
         'first_name',
         'middle_name',
         'last_name',
-
-        /*
-        |--------------------------------------------------------------------------
-        | Authentication
-        |--------------------------------------------------------------------------
-        */
         'email',
         'phone',
         'password',
-
-        /*
-        |--------------------------------------------------------------------------
-        | Account Management
-        |--------------------------------------------------------------------------
-        */
         'avatar',
         'profile_completed',
         'must_change_password',
@@ -224,4 +196,17 @@ class User extends Authenticatable implements FilamentUser, HasName
         return "{$this->getFullNameAttribute()}";
     }
     
+                /**
+     * The "booted" method of the model.
+     */
+    protected static function booted(): void
+    {
+        
+        static::created(function (User $user) {
+                $user->profile()->create([
+                    'user_id' => $user->id,
+                ]);
+            });
+
+    }
 }

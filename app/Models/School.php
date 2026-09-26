@@ -4,8 +4,10 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Concerns\HasUniqueStringIds;
 use Illuminate\Database\Eloquent\Model;
+
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Ramsey\Uuid\Uuid;
+
 use Illuminate\Database\Eloquent\SoftDeletes;
 
 class School extends Model
@@ -65,12 +67,55 @@ public function newUniqueId(): string
 
     protected function users():HasMany
     {
-       //  return $this->hasMany(User::class);
+          return $this->hasMany(User::class);
     }
 
     public function learners():HasMany
     {
        // return $this->hasMany(Learner::class);
     }
+
+    public function groups():HasMany
+    {
+       return $this->hasMany(Group::class);
+    }
+
+    public function departments():HasMany
+    {
+       return $this->hasMany(Department::class);
+    }
+
+    public function academicyears():HasMany
+    {
+        return $this->hasMany(AcademicYear::class);
+    }
     
+    protected function casts(): array
+{
+    return [
+        'settings' => 'array',
+    ];
+}
+
+                /**
+     * The "booted" method of the model.
+     */
+    protected static function booted(): void
+    {
+        
+      //  static::addGlobalScope('schoolcode', function (Builder $builder) {
+       //     $builder->where('school_id', Auth::user()->school_id);
+       // });
+
+        // static::creating(function (AcademicYear $academicyear) {
+        //     $academicyear->school_id = Auth::user()->school_id;
+        //     $academicyear->user_id = Auth::user()->id;
+        // });
+
+        // static::updating(function (AcademicYear $academicyear) {
+        //     $academicyear->school_id = Auth::user()->school_id;
+        //     $academicyear->user_id = Auth::user()->id;
+        // });
+
+    }
 }

@@ -43,6 +43,29 @@ class SchoolPanelProvider extends PanelProvider
                 PanelsRenderHook::AUTH_LOGIN_FORM_AFTER,
                fn (): View => view('components/hooks/linkhome'), 
             )
+            ->renderHook(
+                PanelsRenderHook::GLOBAL_SEARCH_BEFORE ,
+               // fn (): string => Blade::render('Highrise Digital Solution'), 
+               fn (): View => view('components/hooks/header'), 
+              
+            )
+            ->renderHook(
+            PanelsRenderHook::PAGE_START,
+            // fn (): string => Blade::render('Highrise Digital Solution'), 
+            fn (): View => view('components/hooks/announcement-banner'),
+            ) 
+            ->renderHook(
+                PanelsRenderHook::SCRIPTS_AFTER,
+                fn (): string => <<<HTML
+                  <script>
+                    window.addEventListener('openPdfBrowser', event => {
+                        if (event.detail?.url) {
+                            window.open(event.detail.url, '_blank');
+                        }
+                    });
+                </script>
+                HTML
+            )
             ->discoverResources(in: app_path('Filament/Resources'), for: 'App\Filament\Resources')
             ->discoverPages(in: app_path('Filament/Pages'), for: 'App\Filament\Pages')
             ->pages([

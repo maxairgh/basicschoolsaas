@@ -15,12 +15,15 @@ use Filament\Support\Icons\Heroicon;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
+use UnitEnum;
 
 class SchoolApplicationResource extends Resource
 {
     protected static ?string $model = SchoolApplication::class;
 
     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedRectangleStack;
+    protected static string | UnitEnum | null $navigationGroup = 'Application';
+    protected static ?int $navigationSort = 1;
 
     protected static ?string $recordTitleAttribute = 'school_name';
 
