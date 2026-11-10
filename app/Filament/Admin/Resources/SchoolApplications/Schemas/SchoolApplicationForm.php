@@ -99,14 +99,21 @@ class SchoolApplicationForm
         ->icon('heroicon-o-check-circle')
         ->schema([
                     Select::make('new_status')
-                    ->options(SchoolApplicationStatus::class)
+                    ->options([
+                        SchoolApplicationStatus::APPROVED->value => SchoolApplicationStatus::APPROVED->label(),
+                        SchoolApplicationStatus::REJECTED->value => SchoolApplicationStatus::REJECTED->label(),
+                    ])
                     ->required(),
                      Textarea::make('admin_notes'),
     ])
         ->action(function (Component $livewire, array $data, SchoolApplication $record){
             
          //check if the school has already been approved
-               if ($record->status === SchoolApplicationStatus::APPROVED || $record->status === SchoolApplicationStatus::REJECTED) {
+               if (in_array($record->status, [
+                   SchoolApplicationStatus::APPROVED,
+                   SchoolApplicationStatus::REJECTED,
+                   SchoolApplicationStatus::CONVERTED,
+               ], true)) {
                               
                Notification::make()
                 ->title('School Application Already Processed')
@@ -117,7 +124,7 @@ class SchoolApplicationForm
                 
                  }
 
-            if ($data['new_status'] === SchoolApplicationStatus::APPROVED) {
+            if ($data['new_status'] === SchoolApplicationStatus::APPROVED->value) {
               
              $feedback = app(SchoolApplicationApprovalService::class)->approve(
                     application: $record,
@@ -146,7 +153,7 @@ class SchoolApplicationForm
                 //create the school and admin user account for the school
             
 
-            } elseif ($data['new_status'] === SchoolApplicationStatus::REJECTED) {
+            } elseif ($data['new_status'] === SchoolApplicationStatus::REJECTED->value) {
                  $record->reject(Auth()->user(), $data['admin_notes']);  
                  Notification::make()
                 ->title('Application Rejected')

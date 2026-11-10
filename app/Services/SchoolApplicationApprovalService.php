@@ -5,7 +5,7 @@ namespace App\Services;
 use App\Models\School;
 use App\Models\SchoolApplication;
 use App\Models\User;
-use App\Models\UserProfile;
+use App\Enums\SchoolApplicationStatus;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Str;
@@ -43,8 +43,8 @@ class SchoolApplicationApprovalService
                 'password' => Hash::make(Str::random(12)),
             ]);
 
-            UserProfile::create([
-                'user_id' => $admin->id,
+            $application->update([
+                'status' => SchoolApplicationStatus::CONVERTED,
             ]);
 
              return [

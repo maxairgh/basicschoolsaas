@@ -24,6 +24,7 @@ class UserSeeder extends Seeder
         $superAdminRole = Role::firstOrCreate(
             [
                 'name' => 'HDS_Super_Admin',
+                'panel' => 'admin',
                 'guard_name' => 'web',
             ]
         );
