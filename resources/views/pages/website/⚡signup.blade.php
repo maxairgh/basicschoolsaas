@@ -43,6 +43,7 @@ new class extends Component implements HasSchemas
 
                     Wizard\Step::make('School Information')
                         ->icon('heroicon-o-building-office')
+                        ->extraAttributes(['class' => 'school-application-first-step'])
                         ->schema([
 
 
@@ -165,6 +166,7 @@ new class extends Component implements HasSchemas
                     Wizard\Step::make('School Details')
 
                         ->icon('heroicon-o-chart-bar')
+                        ->extraAttributes(['class' => 'school-application-final-step'])
 
                         ->schema([
 

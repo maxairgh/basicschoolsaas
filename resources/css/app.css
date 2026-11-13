@@ -52,6 +52,22 @@
     --primary-950: 23, 37, 84;     /* RGB equivalent of Tailwind blue-950 */
 }
 
+.fi-sc-wizard:has(.school-application-first-step.fi-active) > .fi-sc-wizard-footer > div:first-child {
+    display: none !important;
+}
+
+.fi-sc-wizard:not(:has(.school-application-final-step.fi-active)) > .fi-sc-wizard-footer > div:last-child {
+    display: none !important;
+}
+
+.fi-sc-wizard:has(.school-application-final-step.fi-active) > .fi-sc-wizard-footer > div:nth-child(3) {
+    display: none !important;
+}
+
+.fi-sc-wizard:has(.school-application-final-step.fi-active) > .fi-sc-wizard-footer > div:last-child {
+    display: block !important;
+}
+
 @theme {
     --font-sans: 'Instrument Sans', ui-sans-serif, system-ui, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji',
         'Segoe UI Symbol', 'Noto Color Emoji';
