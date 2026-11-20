@@ -30,6 +30,7 @@ class ParentPanelProvider extends PanelProvider
             ->id('parent')
             ->path('parent')
             ->login(Login::class)
+            ->passwordReset()
             ->colors([
                 'primary' => Color::Amber,
             ])

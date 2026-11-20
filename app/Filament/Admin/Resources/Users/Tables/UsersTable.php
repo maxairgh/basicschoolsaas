@@ -2,6 +2,7 @@
 
 namespace App\Filament\Admin\Resources\Users\Tables;
 
+use App\Filament\Admin\Resources\Users\Actions\UserPasswordResetLinkAction;
 use Filament\Actions\BulkActionGroup;
 use Filament\Actions\DeleteBulkAction;
 use Filament\Actions\EditAction;
@@ -18,7 +19,7 @@ class UsersTable
     public static function configure(Table $table): Table
     {
         return $table
-        
+
             ->columns([
                 TextColumn::make('school.school_name')
                     ->numeric()
@@ -69,6 +70,7 @@ class UsersTable
             ])
             ->recordActions([
                 ViewAction::make(),
+                UserPasswordResetLinkAction::make(),
                 EditAction::make(),
             ])
             ->toolbarActions([

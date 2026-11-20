@@ -2,8 +2,6 @@
 
 namespace Database\Seeders;
 
- 
-use Database\Seeders\UserSeeder;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 
@@ -18,7 +16,8 @@ class DatabaseSeeder extends Seeder
     {
         $this->call([
             RegionDistrictSeeder::class,
+            PolicyPermissionSeeder::class,
             UserSeeder::class,
-    ]);
+        ]);
     }
 }
