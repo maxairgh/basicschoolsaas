@@ -26,7 +26,7 @@ class GroupResource extends Resource
 
     protected static ?string $recordTitleAttribute = 'name';
 
-    protected ?string $subheading = 'Custom Page Subheading';
+
 
     public static function form(Schema $schema): Schema
     {
