@@ -2,8 +2,12 @@
 
 namespace App\Enums;
 
+use App\Traits\EnumOptions;
+
 enum UserType: string
 {
+    use EnumOptions;
+
      case SYSTEM = 'admin';
     case SCHOOL = 'school';
     case PARENT = 'parent';

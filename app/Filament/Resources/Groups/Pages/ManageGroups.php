@@ -9,6 +9,7 @@ use Filament\Resources\Pages\ManageRecords;
 class ManageGroups extends ManageRecords
 {
     protected static string $resource = GroupResource::class;
+        protected ?string $subheading = 'Sections, Houses or Teams within the school.';
 
     protected function getHeaderActions(): array
     {

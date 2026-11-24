@@ -2,8 +2,12 @@
 
 namespace App\Enums;
 
+use App\Traits\EnumOptions;
+
 enum SchoolApplicationStatus: string
 {
+    use EnumOptions;
+
     case PENDING = 'pending';
 
     case APPROVED = 'approved';
